@@ -1,0 +1,56 @@
+:root {
+  /* 초보자용: 전체 폰트/색/렌더링 설정 */
+  /* ✅ 픽셀 느낌 폰트(레트로) */
+  font-family: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* ✅ YouTube Music 컨셉 컬러(다크 + 레드 포인트) */
+  /* ✅ 픽셀 UI 팔레트(단색 배경) */
+  --bg: #ffffff;
+  /* ✅ 완전 흰색 배경(단색) */
+  --surface: #ffffff;
+  --surface-strong: #ffffff;
+  --border: #1f1b2e;
+  /* 굵은 테두리용 */
+  --shadow: #1f1b2e;
+  /* 픽셀 그림자용 */
+
+  --text: #1f1b2e;
+  --text-muted: #3a3450;
+  --text-faint: #6a6285;
+
+  /* ✅ 픽셀 포인트(YouTube Music 레드 유지) */
+  --accent: #ff0033;
+  --accent-hover: #e6002e;
+  --accent-soft: rgba(255, 0, 51, 0.18);
+  --danger: #ff4d4f;
+  --danger-soft: rgba(255, 77, 79, 0.16);
+
+  color: var(--text);
+  background-color: var(--bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  /* ✅ 요청: 배경 그라데이션 금지 → 단색만 사용 */
+  background: var(--bg);
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.95em;
+  color: rgba(17, 24, 39, 0.86);
+}
+
+/* ✅ 픽셀 폰트 로드(가볍게) */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
