@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { BrowserRouter, Link, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom'
+import YouTube from 'react-youtube'
 import './App.css'
 
 // ✅ 초보자용 설명
@@ -77,8 +78,8 @@ function InputPage() {
         <div className="inputOnlyBrand">
           <div className="brandMark" aria-hidden="true" />
           <div className="brandText">
-            <div className="title">Playlist Player</div>
-            <div className="subtitle">플레이리스트 링크만 넣으면 바로 재생해요</div>
+            <div className="title">YoutubeMusic Playlist</div>
+            <div className="subtitle">유튜브 뮤직 플레이리스트 링크를 넣어주세요.</div>
           </div>
         </div>
 
@@ -89,14 +90,14 @@ function InputPage() {
             value={playlistUrlInput}
             onChange={(event) => setPlaylistUrlInput(event.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="유튜브(뮤직) 플레이리스트 URL을 붙여넣어 주세요"
+            placeholder="유튜브 뮤직 플레이리스트 URL을 붙여넣어 주세요"
             inputMode="url"
             autoFocus
           />
         </label>
 
         <button className="primaryButton inputOnlyButton" onClick={handleGoPlayerPage}>
-          재생 페이지로 이동
+          플레이리스트로 이동
         </button>
 
         {errorMessage ? <div className="error">{errorMessage}</div> : null}
@@ -116,10 +117,70 @@ function PlayerPage() {
   const playlistId = (searchParams.get('list') ?? '').trim()
 
   const [autoplayEnabled, setAutoplayEnabled] = useState(true)
-  const embedUrl = useMemo(() => {
-    if (!playlistId) return ''
-    return buildYoutubeEmbedUrl(playlistId, autoplayEnabled)
+
+  // YouTube 플레이어 상태
+  const [playerTarget, setPlayerTarget] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(autoplayEnabled)
+  const [volume, setVolume] = useState(50)
+  const [currentTitle, setCurrentTitle] = useState('로딩 중...')
+
+  // YouTube 옵션
+  const opts = useMemo(() => {
+    return {
+      width: '100%',
+      height: '100%',
+      playerVars: {
+        listType: 'playlist',
+        list: playlistId,
+        autoplay: autoplayEnabled ? 1 : 0,
+      },
+    }
   }, [playlistId, autoplayEnabled])
+
+  const updateTitle = (player) => {
+    const data = player.getVideoData()
+    if (data?.title) {
+      let author = data.author || ''
+      // 유튜브 원본 데이터에 붙어오는 " - Topic" 문구만 깔끔하게 제거
+      author = author.replace(/ - Topic$/i, '')
+      const displayTitle = author ? `${data.title} - ${author}` : data.title
+      setCurrentTitle(displayTitle)
+    }
+  }
+
+  const onReady = (event) => {
+    setPlayerTarget(event.target)
+    event.target.setVolume(volume)
+    updateTitle(event.target)
+  }
+
+  const onStateChange = (event) => {
+    if (event.data === 1) {
+      setIsPlaying(true)
+      updateTitle(event.target)
+    }
+    else if (event.data === 2) {
+      setIsPlaying(false)
+    }
+  }
+
+  const handlePlayPause = () => {
+    if (!playerTarget) return
+    if (isPlaying) {
+      playerTarget.pauseVideo()
+    } else {
+      playerTarget.playVideo()
+    }
+  }
+
+  const handlePrev = () => playerTarget && playerTarget.previousVideo()
+  const handleNext = () => playerTarget && playerTarget.nextVideo()
+
+  const handleVolumeChange = (e) => {
+    const newVol = Number(e.target.value)
+    setVolume(newVol)
+    if (playerTarget) playerTarget.setVolume(newVol)
+  }
 
   return (
     <div className="page">
@@ -169,7 +230,7 @@ function PlayerPage() {
 
         <section className="playerCard">
           <div className="playerHeader">
-            <h2 className="playerTitle">플레이어</h2>
+            <h2 className="playerTitle">오디오 컨트롤</h2>
             {playlistId ? (
               <a
                 className="openLink"
@@ -182,15 +243,48 @@ function PlayerPage() {
             ) : null}
           </div>
 
-          <div className="playerFrameWrap">
-            {embedUrl ? (
-              <iframe
-                className="playerFrame"
-                src={embedUrl}
-                title="YouTube Playlist Player"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowFullScreen
-              />
+          <div className="customPlayerArea">
+            {playlistId ? (
+              <>
+                <YouTube
+                  videoId=""
+                  opts={opts}
+                  onReady={onReady}
+                  onStateChange={onStateChange}
+                  className="hiddenYouTubePlayer"
+                />
+
+                <div className="retroControls">
+                  <div className="trackTitleBox">
+                    {currentTitle}
+                  </div>
+
+                  <div className="retroButtons">
+                    <button className="retroBtn" onClick={handlePrev} title="이전 곡">
+                      [|◀]
+                    </button>
+                    <button className="retroBtn playBtn" onClick={handlePlayPause} title={isPlaying ? '일시정지' : '재생'}>
+                      {isPlaying ? '[| |]' : '[▶]'}
+                    </button>
+                    <button className="retroBtn" onClick={handleNext} title="다음 곡">
+                      [▶|]
+                    </button>
+                  </div>
+
+                  <div className="retroVolume">
+                    <span className="volLabel">VOL</span>
+                    <input
+                      type="range"
+                      className="volSlider"
+                      min="0"
+                      max="100"
+                      value={volume}
+                      onChange={handleVolumeChange}
+                    />
+                    <span className="volValue">{volume}%</span>
+                  </div>
+                </div>
+              </>
             ) : (
               <div className="playerEmpty">플레이리스트를 찾을 수 없어요.</div>
             )}

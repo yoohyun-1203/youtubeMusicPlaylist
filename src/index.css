@@ -1,10 +1,18 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   /* 초보자용: 전체 폰트/색/렌더링 설정 */
   /* ✅ 픽셀 느낌 폰트(레트로) */
-  font-family: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+  font-family: 'RoundedFixedsys', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;
   line-height: 1.5;
   font-weight: 400;
+  /* ✅ 자간(글자 간격) 살짝 넓혀서 가독성 높이기 */
+  letter-spacing: 0.8px;
 
   /* ✅ YouTube Music 컨셉 컬러(다크 + 레드 포인트) */
   /* ✅ 픽셀 UI 팔레트(단색 배경) */
@@ -52,5 +60,10 @@ code {
   color: rgba(17, 24, 39, 0.86);
 }
 
-/* ✅ 픽셀 폰트 로드(가볍게) */
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+/* ✅ 픽셀 폰트 로드: 둥근모꼴+ Fixedsys */
+@font-face {
+  font-family: 'RoundedFixedsys';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}

@@ -14,12 +14,14 @@
 }
 
 .pageInputOnly {
-  /* 입력 페이지는 정말 심플하게: 중앙 정렬 */
-  justify-content: center;
+  /* 메인 페이지와 플레이리스트 위치를 고정시켜 높이를 통일하기 위해 상단 여백 지정 */
+  justify-content: flex-start;
+  padding-top: 10vh;
 }
 
 .header {
-  padding: 28px 20px 12px;
+  /* 메인 페이지와 동일한 위치에서 그림이 시작되도록 상단 여백 완전 통일 */
+  padding: 10vh 20px 12px;
   display: flex;
   justify-content: center;
 }
@@ -58,17 +60,22 @@
 }
 
 .brandMark {
-  /* ✅ 컨셉 변경: "벽걸이 CD 플레이어" (더 크게) */
+  /* ✅ 컨셉 변경: "햄스터 쳇바퀴" (더 크게) */
   width: 300px;
   height: 300px;
   /* ✅ 요청: 사진 뒤의 박스(배경/테두리/그림자) 제거 → 사진만 보여주기 */
   border-radius: 0;
-  /* ✅ 캐시 방지: 사진 바꿨을 때 ?v 숫자만 올리면 즉시 반영돼요 */
-  background: transparent url('/cd-player.png?v=2') center / contain no-repeat;
+  /* ✅ 햄스터 쳇바퀴 여러 겹으로 쌓기 (앞에 있는게 위로 옴) */
+  background:
+    url('/hamster3.png') center / contain no-repeat,
+    url('/hamsterWheel.png') center / contain no-repeat,
+    url('/wheelFloor.png') center / contain no-repeat;
   border: 0;
   box-shadow: none;
   position: relative;
   transform: translateZ(0);
+  /* 그림 마진 꼼수를 제거하여 높이를 정상 복구 */
+  margin-top: 0;
   overflow: visible;
 }
 
@@ -140,6 +147,7 @@
 }
 
 .brandText .title {
+  margin-top: 30px;
   font-size: 32px;
   font-weight: 800;
   letter-spacing: 0.2px;
@@ -157,13 +165,13 @@
   justify-items: center;
 }
 
-/* ✅ 요청: 그림-글자 간격을 더 줄이기(마이너스 margin) */
+/* ✅ 그림을 위로 살짝 올려 글자를 가리지 않게 수정 */
 .brand .brandText {
-  margin-top: -50px;
+  margin-top: -20px;
 }
 
 .inputOnlyBrand .brandText {
-  margin-top: -50px;
+  margin-top: -20px;
 }
 
 /* ------------------------------
@@ -413,37 +421,133 @@
   text-decoration: underline;
 }
 
-.playerFrameWrap {
+/* ✅ 유튜브 플레이어는 코드만 동작하게 화면에서 숨김 */
+.hiddenYouTubePlayer {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ✅ 새로운 커스텀 오디오 컨트롤 영역 */
+.customPlayerArea {
   padding: 0 18px 18px;
 }
 
-.playerFrameWrap {
-  /* 16:9 비율 유지 */
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 0;
-  overflow: hidden;
-  background: #ffffff;
+.retroControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  background: #f7f7f7;
   border: 4px solid var(--border);
 }
 
-.playerFrame {
-  position: absolute;
-  inset: 0;
+.trackTitleBox {
   width: 100%;
-  height: 100%;
-  border: 0;
+  max-width: 400px;
+  padding: 12px 16px;
+  background: var(--text);
+  color: #33ff00;
+  /* 레트로 디지털 형광 그린 */
+  border: 4px solid var(--border);
+  box-shadow: inset 4px 4px 0 0 rgba(0, 0, 0, 0.4);
+  font-size: 15px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 1px;
+}
+
+.retroButtons {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.retroBtn {
+  font-family: inherit;
+  font-size: 20px;
+  color: var(--text);
+  background: #ffffff;
+  border: 4px solid var(--border);
+  box-shadow: 4px 4px 0 0 var(--shadow);
+  cursor: pointer;
+  padding: 12px 16px;
+  transition: transform 80ms, box-shadow 80ms;
+}
+
+.retroBtn.playBtn {
+  font-size: 24px;
+  padding: 12px 24px;
+  color: #ffffff;
+  background: var(--accent);
+}
+
+.retroBtn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 0 var(--shadow);
+}
+
+.retroBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 var(--shadow);
+}
+
+.retroVolume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.volLabel {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.volSlider {
+  flex: 1;
+  appearance: none;
+  height: 12px;
+  background: #ffffff;
+  outline: none;
+  border: 3px solid var(--border);
+  box-shadow: 2px 2px 0 0 var(--shadow);
+}
+
+.volSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 24px;
+  background: var(--accent);
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+.volSlider::-moz-range-thumb {
+  width: 16px;
+  height: 24px;
+  background: var(--accent);
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+.volValue {
+  font-size: 14px;
+  min-width: 40px;
+  text-align: right;
 }
 
 .playerEmpty {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
   padding: 18px;
   text-align: center;
-  color: rgba(17, 24, 39, 0.72);
+  color: var(--text-muted);
 }
 
 .footer {
